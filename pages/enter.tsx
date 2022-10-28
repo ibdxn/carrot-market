@@ -1,16 +1,17 @@
+import type { NextPage } from "next";
 import { useState } from "react";
-import { cls } from "../libs/client/utils";
-import Button from "../components/button";
-import Input from "../components/input";
 import { useForm } from "react-hook-form";
-import useMutation from "../libs/client/useMutation";
+import Button from "@components/button";
+import Input from "@components/input";
+import useMutation from "@libs/client/useMutation";
+import { cls } from "@libs/client/utils";
 
 interface EnterForm {
   email?: string;
   phone?: string;
 }
 
-export default function Enter() {
+const Enter: NextPage = () => {
   const [enter, { loading, data, error }] = useMutation("/api/users/enter");
   const { register, handleSubmit, reset } = useForm<EnterForm>();
   const [method, setMethod] = useState<"email" | "phone">("email");
@@ -23,6 +24,7 @@ export default function Enter() {
     setMethod("phone");
   };
   const onValid = (validForm: EnterForm) => {
+    if (loading) return;
     enter(validForm);
   };
   return (
@@ -85,7 +87,7 @@ export default function Enter() {
           ) : null}
           {method === "email" ? (
             <Button text={loading ? "Loading" : "Get login link"} />
-          ) : null}{" "}
+          ) : null}
           {method === "phone" ? (
             <Button text={loading ? "Loading" : "Get one-time password"} />
           ) : null}
@@ -129,4 +131,5 @@ export default function Enter() {
       </div>
     </div>
   );
-}
+};
+export default Enter;
