@@ -5,13 +5,13 @@ import Item from "@components/item";
 import useUser from "@libs/client/useUser";
 
 const Home: NextPage = () => {
-  const {user, isLoading} = useUser();  
+  const { user, isLoading } = useUser();
   return (
     <Layout title="홈" hasTabBar>
       <div className="flex  flex-col space-y-5 py-10">
         {[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1].map((_, i) => (
           <Item
-            id={i} 
+            id={i}
             key={i}
             title="iPhone 14"
             price={99}
@@ -19,7 +19,7 @@ const Home: NextPage = () => {
             hearts={1}
           />
         ))}
-        <FloatingButton href="/items/upload">
+        <FloatingButton href="/products/upload">
           <svg
             className="h-6 w-6"
             xmlns="http://www.w3.org/2000/svg"
