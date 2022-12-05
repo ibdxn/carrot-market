@@ -73,9 +73,11 @@ const ItemDetail: NextPage = () => {
         <div>
           <h2 className="text-2xl font-bold text-gray-900">Similar items</h2>
           <div className="mt-6 grid grid-cols-2 gap-4">
-            <Link href={`/users/profiles/${data?.product?.id}`}>
-              {data?.relatedProducts.map((product) => (
-                <div key={product.id}>
+            {data?.relatedProducts?.map((product) => (
+              <Link href={`/products/${data?.relatedProducts}`}>
+                <div 
+                //유사항목 아이템 누르면 그아이템 상세페이지로 이동하게 하기
+                key={product.id}>
                   <div className="h-56 w-full mb-4 bg-slate-300" />
                   <h3 className="text-sm text-gray-700 -mb-1">
                     {product.name}
@@ -85,8 +87,8 @@ const ItemDetail: NextPage = () => {
                     ${product.price}
                   </span>
                 </div>
-              ))}
-            </Link>
+              </Link>
+            ))}
           </div>
         </div>
       </div>
