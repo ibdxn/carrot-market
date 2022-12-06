@@ -1,13 +1,13 @@
-import type { NextPage } from "next"; //6:35
 import Button from "@components/button";
 import Input from "@components/input";
 import Layout from "@components/layout";
 import TextArea from "@components/textarea";
-import { useForm } from "react-hook-form";
 import useMutation from "@libs/client/useMutation";
 import { Product } from "@prisma/client";
+import type { NextPage } from "next"; //6:35
 import { useRouter } from "next/router";
 import { useEffect } from "react";
+import { useForm } from "react-hook-form";
 
 interface UploadProductForm {
   name: string;

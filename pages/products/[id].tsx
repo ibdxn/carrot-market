@@ -1,10 +1,10 @@
-import type { NextPage } from "next";
 import Button from "@components/button";
 import Layout from "@components/layout";
+import { Product, User } from "@prisma/client";
+import type { NextPage } from "next";
+import Link from "next/link";
 import { useRouter } from "next/router";
 import useSWR from "swr";
-import Link from "next/link";
-import { Product, User } from "@prisma/client";
 
 interface ProductWithUser extends Product {
   user: User;
@@ -21,6 +21,8 @@ const ItemDetail: NextPage = () => {
   const { data } = useSWR<ItemDetailResponse>(
     router.query.id ? `/api/products/${router.query.id}` : null
   );
+  console.log(data?.product);
+
 
   return (
     <Layout canGoBack>
@@ -74,19 +76,19 @@ const ItemDetail: NextPage = () => {
           <h2 className="text-2xl font-bold text-gray-900">Similar items</h2>
           <div className="mt-6 grid grid-cols-2 gap-4">
             {data?.relatedProducts?.map((product) => (
-              <Link href={`/products/${data?.relatedProducts}`}>
-                <div 
-                //유사항목 아이템 누르면 그아이템 상세페이지로 이동하게 하기
+               <Link href={`/products/${product.id}`}>
+              <div
                 key={product.id}>
-                  <div className="h-56 w-full mb-4 bg-slate-300" />
-                  <h3 className="text-sm text-gray-700 -mb-1">
-                    {product.name}
-                  </h3>
-                  <span className="text-sm font-medium text-gray-900">
-                    {" "}
-                    ${product.price}
-                  </span>
-                </div>
+
+                <div className="h-56 w-full mb-4 bg-slate-300" />
+                <h3 className="text-sm text-gray-700 -mb-1">
+                  {product.name}
+                </h3>
+                <span className="text-sm font-medium text-gray-900">
+                  {" "}
+                  ${product.price}
+                </span>
+              </div>
               </Link>
             ))}
           </div>
