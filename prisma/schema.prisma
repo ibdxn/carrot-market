@@ -22,6 +22,7 @@ model User {
   updated       DateTime    @updatedAt
   tokens Token[]
   products Product []
+  fav Fav[]
 }
 
 model Token {
@@ -37,11 +38,22 @@ model Token {
 model Product {
  id Int @id @default(autoincrement())
  created DateTime @default(now())
-updated       DateTime    @updatedAt
+ updated DateTime    @updatedAt
  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId Int
   image String @db.MediumText
   name String
   price Int
   description String @db.MediumText
+  favs Fav[]
+}
+
+model Fav {
+  id Int @id @default(autoincrement())
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId Int
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  productId Int
+ created DateTime @default(now())
+ updated DateTime    @updatedAt
 }
