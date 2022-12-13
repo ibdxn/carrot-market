@@ -36,6 +36,7 @@ async function handler(
           connect: {
             id: Number(id),
           },
+          
         },
       },
     });
