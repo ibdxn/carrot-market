@@ -6,7 +6,7 @@ interface UseMutationState<T> {
 }
 type UseMutationResult<T> = [(data: any) => void, UseMutationState<T>];
 
-export default function useMutation<T = any>(
+export default function  useMutation<T = any>(
   url: string
 ): UseMutationResult<T> {
   const [state, setState] = useState<UseMutationState<T>>({
