@@ -34,6 +34,7 @@ const Create: NextPage = () => {
       router.push(`/streams/${data.stream.id}`);
     }
   }, [data, router]);
+
   return (
     <Layout canGoBack title="Go Live">
       <form onSubmit={handleSubmit(onValid)} className=" space-y-4 py-10 px-4">
