@@ -20,7 +20,11 @@ interface PostsResponse {
 }
 const Community: NextPage = () => {
   const { latitude, longitude } = useCoords();
-  const { data } = useSWR<PostsResponse>( latitude && longitude ? `/api/posts?latitude=${latitude}&longitude=${longitude}` : null);
+  const { data } = useSWR<PostsResponse>(
+    latitude && longitude
+      ? `/api/posts?latitude=${latitude}&longitude=${longitude}`
+      : null
+  );
   return (
     <Layout hasTabBar title="동네생활">
       <div className="py-16 space-y-8 px-4">
@@ -36,7 +40,7 @@ const Community: NextPage = () => {
               </div>
               <div className="mt-5 px-4 flex items-center justify-between w-full text-gray-500 font-medium text-xs">
                 <span>{post.user.name}</span>
-                <span>{String(post.created)}</span>
+                <span>{String(post.createdAt)}</span>
               </div>
               <div className="flex px-4 space-x-5 mt-3 text-gray-700 py-2.5 border-t   w-full">
                 <span className="flex space-x-2 items-center text-sm">

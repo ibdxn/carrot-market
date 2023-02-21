@@ -2,8 +2,8 @@ import type { NextPage } from "next";
 import Layout from "@components/layout";
 import Message from "@components/message";
 import { useRouter } from "next/router";
-import useSWR from "swr";
-import { useEffect } from "react";
+import useSWR, { mutate } from "swr";
+import { useEffect, useRef } from "react";
 import { useForm } from "react-hook-form";
 import useMutation from "@libs/client/useMutation";
 import useUser from "@libs/client/useUser";
@@ -35,17 +35,45 @@ const Streams: NextPage = () => {
   const { user } = useUser();
   const router = useRouter();
   const { register, handleSubmit, reset } = useForm<MessageForm>();
-  const { data } = useSWR<StreamResponse>(
-    router.query.id ? `/api/streams/${router.query.id}` : null
+  const { data, mutate } = useSWR<StreamResponse>(
+    router.query.id ? `/api/streams/${router.query.id}` : null,
+    {
+      refreshInterval: 1000,
+    }
   );
+  const scrollRef = useRef<HTMLDivElement>(null);
   const [sendMessage, { loading, data: sendMessageData }] = useMutation(
     `/api/streams/${router.query.id}/messages`
   );
   const onValid = (form: MessageForm) => {
     if (loading) return;
     reset();
+    mutate(
+      (prev) =>
+        prev &&
+        ({
+          ...prev,
+          stream: {
+            ...prev.stream,
+            messages: [
+              ...prev.stream.messages,
+              {
+                id: Date.now(),
+                message: form.message,
+                user: {
+                  ...user,
+                },
+              },
+            ],
+          },
+        } as any),
+      false
+    );
     sendMessage(form);
   };
+  useEffect(() => {
+    scrollRef?.current?.scrollIntoView();
+  });
   useEffect(() => {
     if (data?.ok === false) {
       router.push("/streams");
@@ -55,7 +83,14 @@ const Streams: NextPage = () => {
   return (
     <Layout canGoBack>
       <div className="py-10 px-4  space-y-4">
-        <div className="w-full rounded-md shadow-sm bg-slate-300 aspect-video" />
+        {data?.stream.cloudflareId ? (
+          <iframe
+            className="w-full aspect-video  rounded-md shadow-sm"
+            src={`https://iframe.videodelivery.net/${data?.stream.cloudflareId}`}
+            allow="accelerometer; gyroscope; autoplay; encrypted-media; picture-in-picture;"
+            allowFullScreen={true}
+          ></iframe>
+        ) : null}
         <div className="mt-5">
           <h1 className="text-3xl font-bold text-gray-900">
             {data?.stream?.name}
@@ -64,6 +99,17 @@ const Streams: NextPage = () => {
             ${data?.stream?.price}
           </span>
           <p className=" my-6 text-gray-700">{data?.stream?.description}</p>
+          <div className="bg-orange-400 p-5 rounded-md overflow-scroll flex flex-col space-y-3">
+            <span>Stream Keys (secret)</span>
+            <span className="text-white">
+              <span className="font-medium text-gray-800">URL:</span>{" "}
+              {data?.stream.cloudflareUrl}
+            </span>
+            <span className="text-white">
+              <span className="font-medium text-gray-800">Key:</span>
+              {data?.stream.cloudflareKey}
+            </span>
+          </div>
         </div>
         <div>
           <h2 className="text-2xl font-bold text-gray-900">Live Chat</h2>
@@ -75,6 +121,7 @@ const Streams: NextPage = () => {
                 reversed={message.user.id === user?.id}
               />
             ))}
+            <div ref={scrollRef} />
           </div>
           <div className="fixed py-2 bg-white  bottom-0 inset-x-0">
             <form

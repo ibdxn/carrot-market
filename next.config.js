@@ -1,7 +1,12 @@
 /** @type {import('next').NextConfig} */
-const nextConfig = {
+module.exports = {
   reactStrictMode: true,
-  swcMinify: true,
-}
-
-module.exports = nextConfig
+  experimental: {
+    reactRoot: true,
+    /*  runtime: "nodejs",
+    serverComponents: true, */
+  },
+  images: {
+    domains: ["imagedelivery.net", "videodelivery.net"],
+  },
+};
