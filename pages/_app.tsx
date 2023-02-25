@@ -2,12 +2,10 @@ import "../styles/globals.css";
 import type { AppProps } from "next/app";
 import { SWRConfig } from "swr";
 import { useRouter } from "next/router";
-import useUser from "@libs/client/useUser";
+import Check from "@components/check";
 
 function MyApp({ Component, pageProps }: AppProps) {
   console.log("APP IS RUNNING");
-  const { pathname } = useRouter();
-  useUser(pathname);
   return (
     <SWRConfig
       value={{
@@ -16,6 +14,7 @@ function MyApp({ Component, pageProps }: AppProps) {
       }}
     >
       <div className="w-full max-w-xl mx-auto">
+        <Check />
         <Component {...pageProps} />
       </div>
     </SWRConfig>

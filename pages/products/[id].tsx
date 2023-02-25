@@ -6,6 +6,8 @@ import { Product, User } from "@prisma/client";
 import type { NextPage } from "next";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import { useEffect } from "react";
+import { useForm } from "react-hook-form";
 import useSWR from "swr";
 
 interface ProductWithUser extends Product {
@@ -19,18 +21,37 @@ interface ItemDetailResponse {
   isLiked: boolean;
 }
 
+interface ChatRoomResponse {
+  ok: boolean;
+  chatRoomId: string;
+}
+
 const ItemDetail: NextPage = () => {
   const router = useRouter();
   const { data, mutate } = useSWR<ItemDetailResponse>(
     router.query.id ? `/api/products/${router.query.id}` : null
   );
+
   const [toggleFav] = useMutation(`/api/products/${router.query.id}/fav`);
   const onFavClick = () => {
     toggleFav({});
     if (!data) return;
     mutate({ ...data, isLiked: !data.isLiked }, false);
   };
-
+  const [createChatRoom, { data: chatRoomData, loading }] =
+    useMutation<ChatRoomResponse>(
+      `/api/chats?productId=${data?.product.id}&invitedId=${data?.product.userId}`
+    );
+  const onTalkToSellerClick = () => {
+    if (loading) return;
+    createChatRoom({});
+    console.log(chatRoomData);
+  };
+  useEffect(() => {
+    if (chatRoomData && chatRoomData.ok) {
+      router.push(`/chats/${chatRoomData.chatRoomId}`);
+    }
+  }, [chatRoomData, router]);
   return (
     <Layout canGoBack>
       <div className="px-4  py-4">
@@ -60,11 +81,15 @@ const ItemDetail: NextPage = () => {
               {data?.product?.name}
             </h1>
             <span className="text-2xl block mt-3 text-gray-900">
-              ${data?.product?.price}
+              ￦{data?.product?.price}
             </span>
             <p className=" my-6 text-gray-700">{data?.product?.description}</p>
             <div className="flex items-center justify-between space-x-2">
-              <Button large text="Talk to seller" />
+              <Button
+                large
+                text="Talk to Seller"
+                onClick={onTalkToSellerClick}
+              />
               <button
                 onClick={onFavClick}
                 className={cls(

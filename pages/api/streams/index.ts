@@ -47,11 +47,29 @@ async function handler(
     });
     res.json({ ok: true, stream });
   } else if (req.method === "GET") {
-    const streams = await client.stream.findMany({
-      // take: 10,
-      // skip: 10,
+    let page =
+      req.query.page && req.query.page !== undefined
+        ? +req.query?.page?.toString()
+        : 1;
+    let skip: number = page - 1;
+    // if (!skip) {
+    //   //페이지 0인경우 생각
+    //   skip = 1;
+    // }
+
+    const rowCnt = await client.stream.count({
+      select: {
+        _all: true,
+      },
     });
-    res.json({ ok: true, streams });
+    const streams = await client.stream.findMany({
+      take: 1,
+      skip,
+      orderBy: {
+        createdAt: "desc",
+      },
+    });
+    res.json({ ok: true, streams, rowCnt });
   }
 }
 

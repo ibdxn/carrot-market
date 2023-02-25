@@ -41,7 +41,7 @@ const Streams: NextPage = () => {
       refreshInterval: 1000,
     }
   );
-  const scrollRef = useRef<HTMLDivElement>(null);
+  // const scrollRef = useRef<HTMLDivElement>(null);
   const [sendMessage, { loading, data: sendMessageData }] = useMutation(
     `/api/streams/${router.query.id}/messages`
   );
@@ -71,9 +71,9 @@ const Streams: NextPage = () => {
     );
     sendMessage(form);
   };
-  useEffect(() => {
-    scrollRef?.current?.scrollIntoView();
-  });
+  // useEffect(() => {
+  //   scrollRef?.current?.scrollIntoView();
+  // });
   useEffect(() => {
     if (data?.ok === false) {
       router.push("/streams");
@@ -83,7 +83,7 @@ const Streams: NextPage = () => {
   return (
     <Layout canGoBack>
       <div className="py-10 px-4  space-y-4">
-        {data?.stream.cloudflareId ? (
+        {data?.stream?.cloudflareId ? (
           <iframe
             className="w-full aspect-video  rounded-md shadow-sm"
             src={`https://iframe.videodelivery.net/${data?.stream.cloudflareId}`}
@@ -121,7 +121,7 @@ const Streams: NextPage = () => {
                 reversed={message.user.id === user?.id}
               />
             ))}
-            <div ref={scrollRef} />
+            {/* <div ref={scrollRef} /> */}
           </div>
           <div className="fixed py-2 bg-white  bottom-0 inset-x-0">
             <form
