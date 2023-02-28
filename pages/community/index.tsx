@@ -5,6 +5,8 @@ import FloatingButton from "@components/floating-button";
 import useSWR from "swr";
 import { Post, User } from "@prisma/client";
 import useCoords from "@libs/client/useCoords";
+import { cls } from "@libs/client/utils";
+import Wonder from "components/wondering";
 
 interface PostWithUser extends Post {
   user: User;
@@ -20,6 +22,7 @@ interface PostsResponse {
 }
 const Community: NextPage = () => {
   const { latitude, longitude } = useCoords();
+
   const { data } = useSWR<PostsResponse>(
     latitude && longitude
       ? `/api/posts?latitude=${latitude}&longitude=${longitude}`
@@ -27,7 +30,7 @@ const Community: NextPage = () => {
   );
   return (
     <Layout hasTabBar title="동네생활">
-      <div className="py-16 space-y-8 px-4">
+      <div className=" space-y-8 px-4">
         {data?.posts?.map((post) => (
           <Link key={post.id} href={`/community/${post.id}`}>
             <a className="flex cursor-pointer flex-col pt-4 items-start">
@@ -35,7 +38,7 @@ const Community: NextPage = () => {
                 동네질문
               </span>
               <div className="mt-2 px-4 text-gray-700">
-                <span className="text-orange-500 font-medium">Q.</span>{" "}
+                <span className="text-orange-500 font-medium">Q.</span>
                 {post.question}
               </div>
               <div className="mt-5 px-4 flex items-center justify-between w-full text-gray-500 font-medium text-xs">
@@ -43,23 +46,11 @@ const Community: NextPage = () => {
                 <span>{String(post.createdAt)}</span>
               </div>
               <div className="flex px-4 space-x-5 mt-3 text-gray-700 py-2.5 border-t   w-full">
-                <span className="flex space-x-2 items-center text-sm">
-                  <svg
-                    className="w-4 h-4"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-                    ></path>
-                  </svg>
-                  <span>궁금해요 {post._count.wondering}</span>
-                </span>
+                <Wonder
+                  key={post.id}
+                  id={post.id}
+                  count={post._count.wondering}
+                />
                 <span className="flex space-x-2 items-center text-sm">
                   <svg
                     className="w-4 h-4"

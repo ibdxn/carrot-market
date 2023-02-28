@@ -45,7 +45,6 @@ const ItemDetail: NextPage = () => {
   const onTalkToSellerClick = () => {
     if (loading) return;
     createChatRoom({});
-    console.log(chatRoomData);
   };
   useEffect(() => {
     if (chatRoomData && chatRoomData.ok) {
@@ -59,12 +58,12 @@ const ItemDetail: NextPage = () => {
           <img
             src={`https://imagedelivery.net/aSbksvJjax-AUC7qVnaC4A/${data?.product.image}/public`}
             className="h-96 bg-slate-300"
-          />{" "}
+          />
           <div className="flex cursor-pointer py-3 border-t border-b items-center space-x-3">
             <img
               src={`https://imagedelivery.net/aSbksvJjax-AUC7qVnaC4A/${data?.product?.user?.avatar}/avatar`}
               className="w-12 h-12 rounded-full bg-slate-300"
-            />{" "}
+            />
             <div>
               <p className="text-sm font-medium text-gray-700">
                 {data?.product?.user?.name}
@@ -144,8 +143,7 @@ const ItemDetail: NextPage = () => {
                     {product.name}
                   </h3>
                   <span className="text-sm font-medium text-gray-900">
-                    {" "}
-                    ${product.price}
+                    ₩{product.price}
                   </span>
                 </div>
               </Link>

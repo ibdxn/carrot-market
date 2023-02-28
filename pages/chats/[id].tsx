@@ -59,10 +59,7 @@ const ChatDetail: NextPage = () => {
     if (loading) return;
     sendMessage(form);
   };
-  const [isReserve, setIsReserve] = useState(false);
-  const onReserveClick = () => {
-    setIsReserve((prev) => !prev);
-  };
+
   const onWriteReviewClick = () => {
     router.push(
       `/review?createdById=${messageData?.chatRoom.hostId}&createdForId=${messageData?.chatRoom.invitedId}`
@@ -70,32 +67,19 @@ const ChatDetail: NextPage = () => {
   };
   return (
     <Layout title={messageData?.chatRoom.invited.name} canGoBack>
-      <div className="border-y-[1px]">
-        {isReserve ? (
-          <div className="flex space-x-2">
-            <button
-              onClick={onReserveClick}
-              className="inline-block my-5 p-2 rounded-md bg-gray-500 text-white cursor-pointer text-sm"
-            >
-              예약취소
-            </button>
+      <div className="border-y-[1px] flex">
+        {
+          <div className="flex  ml-auto mx-5">
             <button
               onClick={onWriteReviewClick}
-              className="inline-block my-5 p-2 rounded-md bg-orange-500 text-white cursor-pointer hover:bg-orange-600 text-sm"
+              className=" inline-block my-2 px-3 py-2 rounded-md bg-orange-500 text-white cursor-pointer hover:bg-orange-600 text-sm "
             >
               리뷰쓰기
             </button>
           </div>
-        ) : (
-          <button
-            onClick={onReserveClick}
-            className="inline-block my-5 p-2 rounded-md bg-green-500 text-white cursor-pointer hover:bg-green-600 text-sm"
-          >
-            예약하기
-          </button>
-        )}
+        }
       </div>
-      <div className="py-10 px-4 space-y-4">
+      <div className=" py-5 px-4 space-y-4">
         {messageData?.chatRoom?.chatMessages.map((message) => (
           <Message
             key={message.id}

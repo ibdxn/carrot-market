@@ -7,50 +7,67 @@ async function handler(
   req: NextApiRequest,
   res: NextApiResponse<ResponseType>
 ) {
-  const {
-    query: { id },
-    session: { user },
-  } = req;
+  if (req.method === "GET") {
+    const {
+      query: { id },
+      session: { user },
+    } = req;
 
-  const alreadyExists = await client.wondering.findFirst({
-    where: {
-      userId: user?.id,
-      postId: Number(id),
-    },
-    select: {
-      id: true,
-    },
-  });
-  if (alreadyExists) {
-    await client.wondering.delete({
+    const WonderingExists = await client.wondering.findFirst({
       where: {
-        id: alreadyExists.id,
+        userId: user?.id,
+        postId: Number(id),
       },
     });
-  } else {
-    await client.wondering.create({
-      data: {
-        user: {
-          connect: {
-            id: user?.id,
-          },
-        },
-        post: {
-          connect: {
-            id: Number(id),
-          },
-        },
+    res.json({ ok: true, WonderingExists });
+  }
+
+  if (req.method === "POST") {
+    const {
+      query: { id },
+      session: { user },
+    } = req;
+
+    const alreadyExists = await client.wondering.findFirst({
+      where: {
+        userId: user?.id,
+        postId: Number(id),
       },
+      select: {
+        id: true,
+      },
+    });
+    if (alreadyExists) {
+      await client.wondering.delete({
+        where: {
+          id: alreadyExists.id,
+        },
+      });
+    } else {
+      await client.wondering.create({
+        data: {
+          user: {
+            connect: {
+              id: user?.id,
+            },
+          },
+          post: {
+            connect: {
+              id: Number(id),
+            },
+          },
+        },
+      });
+    }
+    res.json({
+      ok: true,
     });
   }
-  res.json({
-    ok: true,
-  });
 }
 
 export default withApiSession(
   withHandler({
-    methods: ["POST"],
+    methods: ["POST", "GET"],
     handler,
   })
 );

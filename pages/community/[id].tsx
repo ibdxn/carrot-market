@@ -3,12 +3,13 @@ import Layout from "@components/layout";
 import TextArea from "@components/textarea";
 import { useRouter } from "next/router";
 import useSWR from "swr";
-import { Answer, Post, User } from "@prisma/client";
+import { Answer, Post, User, Wondering } from "@prisma/client";
 import Link from "next/link";
 import useMutation from "@libs/client/useMutation";
 import { cls } from "@libs/client/utils";
 import { useForm } from "react-hook-form";
 import { useEffect } from "react";
+import Wonder from "@components/wondering";
 
 interface AnswerWithUser extends Answer {
   user: User;
@@ -38,9 +39,15 @@ interface AnswerResponse {
   response: Answer;
 }
 
+interface AnswerResponse {
+  ok: boolean;
+  WonderingExists: Wondering;
+}
+
 const CommunityPostDetail: NextPage = () => {
   const router = useRouter();
   const { register, handleSubmit, reset } = useForm<AnswerForm>();
+
   const { data, mutate } = useSWR<CommunityPostResponse>(
     router.query.id ? `/api/posts/${router.query.id}` : null
   );
@@ -102,7 +109,7 @@ const CommunityPostDetail: NextPage = () => {
         </div>
         <div>
           <div className="mt-2 px-4 text-gray-700">
-            <span className="text-orange-500 font-medium">Q.</span>{" "}
+            <span className="text-orange-500 font-medium">Q.</span>
             {data?.post?.question}
           </div>
           <div className="flex px-4 space-x-5 mt-3 text-gray-700 py-2.5 border-t border-b-[2px]  w-full">

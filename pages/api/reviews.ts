@@ -7,26 +7,55 @@ async function handler(
   req: NextApiRequest,
   res: NextApiResponse<ResponseType>
 ) {
-  const {
-    session: { user },
-  } = req;
+  if (req.method === "POST") {
+    const {
+      body: { review, score, createdById, createdForId },
+    } = req;
 
-  const reviews = await client.review.findMany({
-    where: {
-      createdForId: user?.id,
-    },
-    include: { createdBy: { select: { id: true, name: true, avatar: true } } },
-  });
+    const reviews = await client.review.create({
+      data: {
+        review,
+        score,
+        createdBy: {
+          connect: { id: createdById },
+        },
+        createdFor: {
+          connect: {
+            id: createdForId,
+          },
+        },
+      },
+    });
+    res.json({
+      ok: true,
+      reviews,
+    });
+  }
 
-  res.json({
-    ok: true,
-    reviews,
-  });
+  if (req.method === "GET") {
+    const {
+      session: { user },
+    } = req;
+
+    const reviews = await client.review.findMany({
+      where: {
+        createdForId: user?.id,
+      },
+      include: {
+        createdBy: { select: { id: true, name: true, avatar: true } },
+      },
+    });
+
+    res.json({
+      ok: true,
+      reviews,
+    });
+  }
 }
 
 export default withApiSession(
   withHandler({
-    methods: ["GET"],
+    methods: ["POST", "GET"],
     handler,
   })
 );
